@@ -47,3 +47,45 @@ Exemplo de consulta para encontrar todos os veículos associados a um determinad
 ```sql
 SELECT * FROM veiculos WHERE funcionario_id = 1;
 ```
+
+## Chave estrangeira
+Nas tabelas : `funcionarios`, `veiculos` e `salarios`. A tabela `funcionarios` tem uma chave primária na coluna `id`, que é usada como chave estrangeira na tabela `veiculos`.
+
+Aqui está um exemplo de como as chaves primárias e estrangeiras funcionam nas tabelas desse script:
+
+```
+-- Tabela funcionarios
+CREATE TABLE funcionarios(
+    id int UNSIGNED NOT NULL AUTO_INCREMENT,
+    nome varchar(45) NOT NULL,
+    salario DOUBLE NOT NULL DEFAULT '0',
+    departamento VARCHAR(45) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- Tabela veiculos
+CREATE TABLE veiculos(
+    id int UNSIGNED NOT NULL AUTO_INCREMENT,
+    funcionario_id int UNSIGNED DEFAULT NULL,
+    veiculo VARCHAR(45) NOT NULL DEFAULT '',
+    placa VARCHAR(10) NOT NULL DEFAULT '',
+    PRIMARY KEY(id),
+    CONSTRAINT fk_veiculos_funcionarios FOREIGN KEY(funcionario_id) REFERENCES funcionarios(id)
+);
+
+-- Exemplo de inserção de dados
+INSERT INTO funcionarios (nome, salario, departamento) VALUES ('João', 2500.00, 'RH');
+INSERT INTO veiculos (funcionario_id, veiculo, placa) VALUES (1, 'Carro', 'AAA-1234');
+
+-- Exemplo de consulta com junção entre as tabelas
+SELECT f.nome, v.veiculo, v.placa 
+FROM funcionarios f 
+JOIN veiculos v ON f.id = v.funcionario_id 
+WHERE f.departamento = 'RH';
+```
+
+Nesse exemplo, a tabela `funcionarios` tem uma chave primária na coluna `id`. Essa chave primária é usada como chave estrangeira na tabela `veiculos`, na coluna `funcionario_id`. Isso significa que cada registro em `veiculos` está associado a um registro em `funcionarios`. Se um registro em `funcionarios` é excluído, todos os registros na tabela de `veiculos` que se referem a esse registro são atualizados ou excluídos automaticamente, dependendo das configurações de restrição da chave estrangeira.
+
+O exemplo de inserção de dados mostra como podemos inserir dados nas tabelas relacionadas. Primeiro, inserimos um registro na tabela de `funcionarios` com `id = 1`, e depois inserimos um registro na tabela de `veiculos` com `funcionario_id = 1`. Isso estabelece uma relação entre esses dois registros.
+
+O exemplo de consulta mostra como podemos combinar as duas tabelas usando uma junção (`JOIN`) na cláusula `FROM`. Combinamos os registros em ambas as tabelas onde o `id` em `funcionarios` corresponde ao `funcionario_id` em `veiculos`. A consulta retorna os nomes dos funcionários, juntamente com informações sobre seus veículos, para aqueles que trabalham no departamento de RH.
