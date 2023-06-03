@@ -40,3 +40,19 @@ CREATE Table funcionarios(
   
   -- Oedena de acordocom os 6 primeiro caracteres
   CREATE INDEX index_nomes ON funcionarios(nome(6));
+
+--Manipulação de dados
+SELECT * FROM funcionarios;
+INSERT INTO funcionarios(id,nome,salario,departamento) VALUES(1,"Junior",1200,"TI");
+INSERT INTO funcionarios(id,nome,salario,departamento) VALUES(2,"Gustavo",1300,"Infra estrutura");
+INSERT INTO funcionarios(nome,salario,departamento) VALUES("João",1400,"TI");
+INSERT INTO funcionarios(nome,salario,departamento) VALUES("Carlos",2000,"Infra Estrutura");
+INSERT INTO funcionarios(nome,salario,departamento) VALUES("José",1500,"Financeiro");
+
+-- SELECT com filtro
+SELECT * FROM funcionarios WHERE departamento = "TI";
+SELECT * FROM funcionarios WHERE id=3;
+
+--Update de todas as colunas da tabela
+SET SQL_SAFE_UPDATES=0;
+UPDATE funcionarios SET salario=salario *5;
