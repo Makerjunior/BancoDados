@@ -49,6 +49,15 @@ INSERT INTO funcionarios(nome,salario,departamento) VALUES("João",1400,"TI");
 INSERT INTO funcionarios(nome,salario,departamento) VALUES("Carlos",2000,"Infra Estrutura");
 INSERT INTO funcionarios(nome,salario,departamento) VALUES("José",1500,"Financeiro");
 
+INSERT INTO veiculos (funcionario_id, veiculo, placa) 
+VALUES (1, 'Carro', 'ABC1234');
+
+SELECT f.nome, v.veiculo, v.placa 
+FROM funcionarios f 
+JOIN veiculos v ON f.id = v.funcionario_id 
+WHERE f.departamento = 'TI';
+
+SELECT * FROM funcionarios;
 -- SELECT com filtro
 SELECT * FROM funcionarios WHERE departamento = "TI";
 SELECT * FROM funcionarios WHERE id=3;
