@@ -52,7 +52,21 @@ INSERT INTO funcionarios(nome,salario,departamento) VALUES('João',1400,'TI');
 INSERT INTO funcionarios(nome,salario,departamento) VALUES('Carlos',2000,'Infra Estrutura');
 INSERT INTO funcionarios(nome,salario,departamento) VALUES('José',1500,'Financeiro');
 
+-- Inserindo varios registros
+INSERT INTO funcionarios(nome, salario, departamento) 
+VALUES
+('Naruto', 2500, 'Marketing'),
+('Goku', 3000, 'TI'),
+('Luffy', 2800, 'Operações'),
+('Sakura', 2200, 'Recursos Humanos'),
+('Vegeta', 3200, 'Financeiro'),
+('Ichigo', 2700, 'Atendimento ao Cliente'),
+('Erza', 2900, 'Vendas'),
+('Kaneki', 2600, 'Desenvolvimento de Software'),
+('Saitama', 3500, 'Gerência'),
+('Levi', 2400, 'Compras');
 
+SELECT * FROM funcionarios;
 
 -- SELECT com filtro
 SELECT * FROM funcionarios WHERE departamento = 'TI';
@@ -69,10 +83,12 @@ SELECT * FROM  funcionarios;
 
 
 -- Inserindo Veiculos
-INSERT INTO veiculos (funcionario_id, veiculo, placa) VALUES (1, 'Caravam', 'ABC1234');
-INSERT INTO veiculos(funcionario_id, veiculo, placa) VALUES(1, 'Opala', 'DBA3465'); 
-INSERT INTO veiculos(funcionario_id, veiculo, placa) VALUES(4, 'Monza', 'ODH2376'); 
-INSERT INTO veiculos(funcionario_id,veiculo,placa) VALUES(null,'GOL','SG4585');
+INSERT INTO veiculos (funcionario_id, veiculo, placa)
+VALUES 
+(1, 'Caravam', 'ABC1234'),
+(1, 'Opala', 'DBA3465'),
+(4, 'Monza', 'ODH2376'), 
+(null,'GOL','SG4585');
 
 SELECT * from veiculos;
 
@@ -114,10 +130,12 @@ PRIMARY KEY (id),
    CONSTRAINT fk_cpf FOREIGN KEY (id) REFERENCES funcionarios(id)
 )
 
-INSERT INTO cpfs(id,cpf) VALUES( 1 , '111.111.111-11 ');
-INSERT INTO cpfs(id,cpf) VALUES( 2 , '222.222.222-22 ');
-INSERT INTO cpfs(id,cpf) VALUES( 3 , '333.333.333-33 ');
-INSERT INTO cpfs(id,cpf) VALUES( 4 , '444.444.444-44 ');
+INSERT INTO cpfs(id,cpf) 
+VALUES
+( 1 , '111.111.111-11 '),
+( 2 , '222.222.222-22 '),
+( 3 , '333.333.333-33 '),
+( 4 , '444.444.444-44 ');
 
 SELECT f.nome, f.departamento, c.cpf, f.salario FROM funcionarios f INNER JOIN cpfs c ON f.id=c.id;
 SELECT * FROM funcionarios  INNER JOIN cpfs USING(id);
@@ -133,10 +151,11 @@ CREATE TABLE clientes
 );
 
 
-INSERT INTO clientes (id, nome, quem_indicou) VALUES (1, 'André', NULL);
-INSERT INTO clientes (id, nome, quem_indicou) VALUES (2, 'Samuel', 1);
-INSERT INTO clientes (id, nome, quem_indicou) VALUES (3, 'Carlos', 2);
-INSERT INTO clientes (id, nome, quem_indicou) VALUES (4, 'Rafael', 1);
+INSERT INTO clientes (id, nome, quem_indicou) VALUES 
+(1, 'André', NULL),
+(2, 'Samuel', 1),
+(3, 'Carlos', 2)
+(4, 'Rafael', 1);
 
 SELECT * FROM clientes;
 
