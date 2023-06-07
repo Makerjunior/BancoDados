@@ -35,7 +35,7 @@ CREATE Table funcionarios(
   -- Deletando tabela
   DROP TABLE salarios;
 
-  --Indices 
+  --  Indices 
   -- Criando índices para ordenação, manipulação, agrupamento e organização
   CREATE INDEX idex_departamentos ON funcionarios(departamento);
   
@@ -44,12 +44,14 @@ CREATE Table funcionarios(
 
 -- Manipulação de dados
  #Inserindo funcionarios 
+-- podemos indicar um id desde que ele não exista 
+INSERT INTO funcionarios(id,nome,salario,departamento) VALUES(1,'Junior',1200,'TI');
+INSERT INTO funcionarios(id,nome,salario,departamento) VALUES(2,'Gustavo',1300,'Infra estrutura'); 
+-- Podemos omitir o id
 INSERT INTO funcionarios(nome,salario,departamento) VALUES('João',1400,'TI');
 INSERT INTO funcionarios(nome,salario,departamento) VALUES('Carlos',2000,'Infra Estrutura');
 INSERT INTO funcionarios(nome,salario,departamento) VALUES('José',1500,'Financeiro');
--- podemos indicar um id desde que ele não exista 
-INSERT INTO funcionarios(id,nome,salario,departamento) VALUES(4,'Junior',1200,'TI');
-INSERT INTO funcionarios(id,nome,salario,departamento) VALUES(5,'Gustavo',1300,'Infra estrutura');
+
 
 
 -- SELECT com filtro
@@ -67,9 +69,10 @@ SELECT * FROM  funcionarios;
 
 
 -- Inserindo Veiculos
-INSERT INTO veiculos (funcionario_id, veiculo, placa) VALUES (1, 'Carro', 'ABC1234');
+INSERT INTO veiculos (funcionario_id, veiculo, placa) VALUES (1, 'Caravam', 'ABC1234');
 INSERT INTO veiculos(funcionario_id, veiculo, placa) VALUES(1, 'Opala', 'DBA3465'); 
 INSERT INTO veiculos(funcionario_id, veiculo, placa) VALUES(4, 'Monza', 'ODH2376'); 
+INSERT INTO veiculos(funcionario_id,veiculo,placa) VALUES(null,'GOL','SG4585');
 
 SELECT * from veiculos;
 
@@ -85,13 +88,86 @@ SELECT * FROM funcionarios f  WHERE nome ='junior'
 UNION
 SELECT * FROM funcionarios f WHERE nome ='Carlos';
 
---  Relacionamentos JOIN
-
+--  Relacionamentos INNER JOIN
 SELECT * FROM  funcionarios;
 SELECT  * FROM veiculos;
 
 SELECT  * FROM funcionarios INNER JOIN veiculos ON funcionario_id =funcionarios.id;
 SELECT  * FROM funcionarios f INNER JOIN veiculos v ON v.funcionario_id =f.id;
+SELECT  f.nome, v.veiculo, v.placa FROM funcionarios f INNER JOIN veiculos v ON v.funcionario_id=f.id;
+SELECT f.nome AS 'Nome', v.veiculo AS 'Veiculo' FROM funcionarios f INNER JOIN veiculos v ON v.funcionario_id=f.id;
+
+-- LEFT JOIN
+SELECT  * FROM funcionarios f LEFT JOIN veiculos v ON v.funcionario_id =f.id;
+-- RIGHT JOIN
+SELECT  * FROM funcionarios f RIGHT JOIN veiculos v ON v.funcionario_id =f.id;
+-- FULL JOIN
+SELECT  * FROM funcionarios f LEFT JOIN veiculos v ON v.funcionario_id =f.id
+UNION 
+SELECT  * FROM funcionarios f RIGHT JOIN veiculos v ON v.funcionario_id =f.id;
+
+-- Criação de tabela com chave estrageira em funcionarios
+CREATE TABLE cpfs (
+id int UNSIGNED NOT NULL,
+cpf varchar(14) NOT NULL,
+PRIMARY KEY (id),
+   CONSTRAINT fk_cpf FOREIGN KEY (id) REFERENCES funcionarios(id)
+)
+
+INSERT INTO cpfs(id,cpf) VALUES( 1 , '111.111.111-11 ');
+INSERT INTO cpfs(id,cpf) VALUES( 2 , '222.222.222-22 ');
+INSERT INTO cpfs(id,cpf) VALUES( 3 , '333.333.333-33 ');
+INSERT INTO cpfs(id,cpf) VALUES( 4 , '444.444.444-44 ');
+
+SELECT f.nome, f.departamento, c.cpf, f.salario FROM funcionarios f INNER JOIN cpfs c ON f.id=c.id;
+SELECT * FROM funcionarios  INNER JOIN cpfs USING(id);
+
+-- SELF Join
+CREATE TABLE clientes
+(
+	id int unsigned not null auto_increment,
+    nome varchar(45) not null,
+    quem_indicou int unsigned,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_quem_indicou FOREIGN KEY (quem_indicou) REFERENCES clientes (id)
+);
+
+
+INSERT INTO clientes (id, nome, quem_indicou) VALUES (1, 'André', NULL);
+INSERT INTO clientes (id, nome, quem_indicou) VALUES (2, 'Samuel', 1);
+INSERT INTO clientes (id, nome, quem_indicou) VALUES (3, 'Carlos', 2);
+INSERT INTO clientes (id, nome, quem_indicou) VALUES (4, 'Rafael', 1);
+
+SELECT * FROM clientes;
+
+SELECT a.nome AS "CLIENTE", b.nome AS "QUEM INDICOU" 
+FROM clientes a join clientes b ON a.quem_indicou = b.id;  # SELF JOIN
+
+-- Relacionamento triplo
+SELECT * FROM funcionarios 
+INNER JOIN veiculos ON veiculos.funcionario_id = funcionarios.id 
+INNER JOIN cpfs ON cpfs.id = funcionarios.id;
+
+SELECT 
+f.nome         as "NOME", 
+f.departamento as "DEPARTAMENTO",
+c.cpf          as "CPF",
+v.veiculo      as "VEICULO",
+v.placa        as "PLACA",
+f.salario      as "SALÁRIO" 
+FROM funcionarios f
+INNER JOIN veiculos v ON v.funcionario_id = f.id 
+INNER JOIN cpfs c ON c.id = f.id;
+
+-- Visões
+CREATE VIEW funcionarios_a AS SELECT * FROM funcionarios WHERE salario >= 1700;
+SELECT * FROM funcionarios_a;
+
+UPDATE funcionarios SET salario = 1500 WHERE id = 3;
+
+DROP VIEW funcionarios_a;
+CREATE VIEW funcionarios_a AS SELECT * FROM funcionarios WHERE salario >= 2000;
+
 
 
 
