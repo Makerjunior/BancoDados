@@ -189,8 +189,17 @@ UPDATE funcionarios SET salario = 1500 WHERE id = 3;
 DROP VIEW funcionarios_a;
 CREATE VIEW funcionarios_a AS SELECT * FROM funcionarios WHERE salario >= 2000;
 
--- Rodar
+
+-- Exemplo
+SELECT f.nome AS 'NOME', 
+c.cpf AS 'CPF', 
+f.salario AS 'SALÁRIO', 
+v.veiculo AS 'VEÍCULOS',  
+v.placa AS 'PLACA' 
+FROM funcionarios f 
+INNER JOIN cpfs c ON f.id=c.id 
+INNER  JOIN veiculos v ON f.id=v.funcionario_id;
 
 
-
+SELECT  * FROM veiculos;
 
