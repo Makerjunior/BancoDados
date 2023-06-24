@@ -1,12 +1,13 @@
 -- Active: 1685670931144@@127.0.0.1@3306@databas
 -- Criação de Banco de Dados
 #Criando tabela funcionarios
-CREATE TABLE funcionarios(
-    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    nome VARCHAR(45) NOT NULL,
-    salario DOUBLE NOT NULL DEFAULT 0,
+CREATE Table funcionarios(
+    id int UNSIGNED NOT NULL AUTO_INCREMENT,
+    nome varchar(45) NOT NULL,
+    salario DOUBLE NOT NULL DEFAULT '0',
     departamento VARCHAR(45) NOT NULL,
     PRIMARY KEY (id)
+    
 );
 
 -- Criação de tabela com chave estrageira ou seja cada veiculo terá uma relação com um funcionário
@@ -103,14 +104,12 @@ SELECT * FROM funcionarios f  WHERE nome ='junior'
 UNION
 SELECT * FROM funcionarios f WHERE nome ='Carlos';
 
---  Relacionamentos INNER JOIN 
+--  Relacionamentos INNER JOIN
 SELECT * FROM  funcionarios;
 SELECT  * FROM veiculos;
 
 SELECT  * FROM funcionarios INNER JOIN veiculos ON funcionario_id =funcionarios.id;
 SELECT  * FROM funcionarios f INNER JOIN veiculos v ON v.funcionario_id =f.id;
-
- -- 
 SELECT  f.nome, v.veiculo, v.placa FROM funcionarios f INNER JOIN veiculos v ON v.funcionario_id=f.id;
 SELECT f.nome AS 'Nome', v.veiculo AS 'Veiculo' FROM funcionarios f INNER JOIN veiculos v ON v.funcionario_id=f.id;
 
@@ -123,7 +122,7 @@ SELECT  * FROM funcionarios f LEFT JOIN veiculos v ON v.funcionario_id =f.id
 UNION 
 SELECT  * FROM funcionarios f RIGHT JOIN veiculos v ON v.funcionario_id =f.id;
 
--- Criação de tabela cpfs com chave estrageira em funcionarios
+-- Criação de tabela com chave estrageira em funcionarios
 CREATE TABLE cpfs (
 id int UNSIGNED NOT NULL,
 cpf varchar(14) NOT NULL,
@@ -138,7 +137,6 @@ VALUES
 ( 3 , '333.333.333-33 '),
 ( 4 , '444.444.444-44 ');
 
-SELECT * FROM cpfs;
 SELECT f.nome, f.departamento, c.cpf, f.salario FROM funcionarios f INNER JOIN cpfs c ON f.id=c.id;
 SELECT * FROM funcionarios  INNER JOIN cpfs USING(id);
 
@@ -156,7 +154,7 @@ CREATE TABLE clientes
 INSERT INTO clientes (id, nome, quem_indicou) VALUES 
 (1, 'André', NULL),
 (2, 'Samuel', 1),
-(3, 'Carlos', 2),
+(3, 'Carlos', 2)
 (4, 'Rafael', 1);
 
 SELECT * FROM clientes;
@@ -190,16 +188,36 @@ DROP VIEW funcionarios_a;
 CREATE VIEW funcionarios_a AS SELECT * FROM funcionarios WHERE salario >= 2000;
 
 
--- Exemplo
-SELECT f.nome AS 'NOME', 
-c.cpf AS 'CPF', 
-f.salario AS 'SALÁRIO', 
-v.veiculo AS 'VEÍCULOS',  
-v.placa AS 'PLACA' 
-FROM funcionarios f 
-INNER JOIN cpfs c ON f.id=c.id 
-INNER  JOIN veiculos v ON f.id=v.funcionario_id;
+
+SELECT  * FROM funcionarios f ;
+
+##  6.2
+
+SELECT COUNT(*) FROM funcionarios; 
+SELECT COUNT(*) FROM funcionarios WHERE salario >2000; 
+SELECT COUNT(*) FROM funcionarios WHERE  salario AND  departamento = 'TI'; 
+SELECT * FROM funcionarios WHERE  salario AND  departamento = 'TI'; 
+SELECT  SUM(salario) AS 'Salario dos funcionarios' FROM funcionarios; 
+SELECT  AVG(salario) AS 'Media de salarios' FROM funcionarios; 
+SELECT Max(salario) FROM funcionarios; 
+SELECT MIN(salario) FROM funcionarios; 
+SELECT DISTINCT(departamento) FROM funcionarios;
+SELECT * FROM funcionarios ORDER BY nome;
+SELECT * FROM funcionarios ORDER BY salario;
+SELECT * FROM funcionarios ORDER BY nome DESC ;
 
 
-SELECT  * FROM veiculos;
+SELECT * FROM funcionarios LIMIT 4;
+
+SELECT * FROM funcionarios LIMIT 3,5;
+
+SELECT departamento, AVG(salario) FROM funcionarios GROUP BY departamento; 
+SELECT departamento, AVG(salario) FROM funcionarios GROUP BY departamento HAVING AVG(salario) > 2000 ; 
+SELECT  departamento, COUNT(*) FROM funcionarios GROUP BY departamento ; 
+SELECT nome, departamento  FROM funcionarios WHERE departamento IN ('TI','Infra estrutura')
+
+## Até aki está documentado em Documentação Banco/Documentacaobkp1 ...
+
+
+
 
