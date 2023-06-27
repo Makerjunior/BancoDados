@@ -1,4 +1,5 @@
-Este script SQL cria três tabelas: `funcionarios`, `veiculos` e `salarios`.
+###Tabelas e Chave estrangeira :
+`funcionarios`, `veiculos` e `salarios`.
 
 A tabela `funcionarios` tem os seguintes campos:
 

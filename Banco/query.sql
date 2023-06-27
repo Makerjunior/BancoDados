@@ -216,7 +216,14 @@ SELECT departamento, AVG(salario) FROM funcionarios GROUP BY departamento HAVING
 SELECT  departamento, COUNT(*) FROM funcionarios GROUP BY departamento ; 
 SELECT nome, departamento  FROM funcionarios WHERE departamento IN ('TI','Infra estrutura')
 
-## Até aki está documentado em Documentação Banco/Documentacaobkp1 ...
+
+
+
+
+
+
+
+## Gerenciamento de Acessos - Tipos de Acessos
 
 
 # Gerenciamento de acesos tipos de acesos
@@ -316,13 +323,6 @@ CALL  sp_apaga_pedidos();
 
 ## Inserindo na tabela estoque
 INSERT INTO estoque VALUES('Notebook', '10'),('Mouse', '10');
-
-
-
-
-
-
-
 
 
 SELECT * FROM contas;

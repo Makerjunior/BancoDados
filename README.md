@@ -463,3 +463,155 @@ As queries acima utilizam funções de agregação para obter informações esta
 - A última query retorna os nomes e departamentos dos funcionários onde o departamento é 'TI' ou 'Infra estrutura'.
 
 ---
+
+
+## Gerenciamento de Acessos - Tipos de Acessos
+Nesta seção, estamos criando três usuários com diferentes configurações de acesso:
+
+O usuário 'usuario1' é criado com acesso permitido somente a partir do endereço IP '200.204.196.180'.
+O usuário 'usuario2' é criado com acesso permitido apenas a partir do host local ('localhost').
+O usuário 'usuario3' é criado com acesso permitido a partir de qualquer host ('%').
+
+```sql
+CREATE USER 'usuario1'@'200.204.196.180' IDENTIFIED WITH mysql_native_password BY '<12345>';
+CREATE USER 'usuario2'@'localhost' IDENTIFIED WITH mysql_native_password BY '<123456>';
+CREATE USER 'usuario3'@'%' IDENTIFIED WITH mysql_native_password BY '<123457>';
+```
+
+## Adicionando Acessos
+Nesta seção, estamos adicionando diferentes tipos de acesso para os usuários criados anteriormente:
+
+O usuário 'mentemaker1' recebe todos os privilégios no banco de dados 'banco_mentemaker1'.
+O usuário 'mentemaker2' recebe apenas o privilégio de SELECT no banco de dados 'banco_mentemaker2'.
+O usuário 'mentemaker3' recebe o privilégio de SELECT apenas na tabela 'funcionarios' do banco de dados 'banco_mentemaker3'.
+
+```sql
+CREATE USER 'mentemaker1'@'localhost' IDENTIFIED WITH mysql_native_password BY '<123456>';
+GRANT ALL ON banco_mentemaker1.* TO 'mentemaker1'@'localhost';
+
+CREATE USER 'mentemaker2'@'%' IDENTIFIED WITH mysql_native_password BY '<123457>';
+GRANT SELECT ON banco_mentemaker2.* TO 'mentemaker2'@'%';
+
+CREATE USER 'mentemaker3'@'%' IDENTIFIED WITH mysql_native_password BY '<1234578>';
+GRANT SELECT ON banco_mentemaker3.funcionarios TO 'mentemaker3'@'%';
+```
+
+## Removendo Acessos
+Nesta seção, estamos revogando e removendo acessos para o usuário 'mentemaker1':
+
+Revogamos o privilégio SELECT no banco de dados 'banco_mentemaker1'.
+Revogamos todos os privilégios no banco de dados 'banco_mentemaker1'.
+Removemos o usuário 'mentemaker1' do host 'localhost'.
+
+```sql
+REVOKE SELECT ON banco_mentemaker1.* FROM 'mentemaker1'@'localhost';
+REVOKE ALL ON banco_mentemaker1.* FROM 'mentemaker1'@'localhost';
+DROP USER IF EXISTS 'mentemaker1'@'localhost';
+```
+
+## Consulta de Usuários
+Nesta seção, estamos realizando consultas relacionadas aos usuários:
+
+Consultamos todos os usuários presentes no servidor MySQL.
+Exibimos as permissões concedidas ao usuário 'mentemaker3' para todos os hosts.
+
+```sql
+SELECT user FROM mysql.user;
+SHOW GRANTS FOR 'mentemaker3'@'%';
+```
+
+## Transações - Informações do Banco de Dados
+Nesta seção, estamos exibindo informações sobre os motores de armazenamento disponíveis no banco de dados e criando a tabela 'contas' usando o mecanismo de armazenamento InnoDB.
+
+```sql
+SHOW ENGINES;
+
+CREATE TABLE contas (
+  id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  titular VARCHAR(50),
+  saldo DOUBLE NOT NULL
+) ENGINE = InnoDB
+
+;
+```
+
+## Adicionando Contas
+Nesta seção, estamos inserindo registros na tabela 'contas', representando contas com seus respectivos titulares e saldos.
+
+```sql
+INSERT INTO contas (titular, saldo) VALUES ('Jose', 1000);
+INSERT INTO contas (titular, saldo) VALUES ('Pedro', 2000);
+```
+
+## Transações - Atualização de Saldo
+Nesta seção, estamos realizando operações de atualização de saldo dentro de transações:
+
+Iniciamos uma transação.
+Atualizamos o saldo de duas contas.
+Confirmamos a transação (commit).
+Iniciamos outra transação.
+Atualizamos novamente o saldo das mesmas contas.
+Cancelamos a transação (rollback).
+
+```sql
+START TRANSACTION;
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+UPDATE contas SET saldo = saldo + 100 WHERE id = 2;
+COMMIT;
+
+START TRANSACTION;
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+UPDATE contas SET saldo = saldo + 100 WHERE id = 2;
+ROLLBACK;
+```
+
+## Stored Procedures
+Nesta seção, estamos criando a tabela 'pedidos' para armazenar informações sobre pedidos, inserindo registros nessa tabela e criando uma Stored Procedure chamada 'sp_apaga_pedidos' para apagar os pedidos não pagos. Em seguida, chamamos essa Stored Procedure para executar a remoção dos pedidos não pagos.
+
+```sql
+CREATE TABLE pedidos (
+  id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  descricao VARCHAR(100) NOT NULL,
+  valor DOUBLE NOT NULL DEFAULT '0',
+  pago VARCHAR(3) NOT NULL DEFAULT 'NAO'
+);
+
+INSERT INTO pedidos (descricao, valor) VALUES ('computador', 49876);
+INSERT INTO pedidos (descricao, valor) VALUES ('celular', 23.50);
+INSERT INTO pedidos (descricao, valor) VALUES ('tv', 1000);
+
+CREATE PROCEDURE sp_apaga_pedidos()
+BEGIN
+  SET SQL_SAFE_UPDATES = 0;
+  DELETE FROM pedidos WHERE pago = 'NAO';
+END;
+
+CALL sp_apaga_pedidos();
+```
+
+## Triggers
+Nesta seção, estamos criando a tabela 'estoque' para armazenar informações sobre itens do estoque. Criamos um trigger chamado 'limpa_pedidos', que é acionado antes de inserir elementos na tabela 'estoque'. Esse trigger chama a Stored Procedure 'sp_apaga_pedidos' para apagar os pedidos não pagos. Por fim, inserimos alguns registros na tabela 'estoque'.
+
+```sql
+CREATE TABLE estoque (
+  id INT NOT NULL AUTO_INCREMENT,
+  nome VARCHAR(10),
+  quantidade INT UNSIGNED ZEROFILL,
+  PRIMARY KEY (id)
+);
+
+CREATE TRIGGER limpa_pedidos
+BEFORE INSERT ON estoque
+FOR EACH ROW
+CALL sp_apaga_pedidos();
+
+INSERT INTO estoque (nome, quantidade) VALUES ('Notebook', 10);
+INSERT INTO estoque (nome, quantidade) VALUES ('Mouse', 10);
+```
+
+## Consulta de Contas
+Nesta seção, estamos consultando os registros da tabela 'contas', exibindo todas as informações relacionadas às contas presentes no banco de dados.
+
+```sql
+SELECT * FROM contas;
+```
