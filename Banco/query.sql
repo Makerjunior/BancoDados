@@ -219,5 +219,111 @@ SELECT nome, departamento  FROM funcionarios WHERE departamento IN ('TI','Infra 
 ## Até aki está documentado em Documentação Banco/Documentacaobkp1 ...
 
 
+# Gerenciamento de acesos tipos de acesos
+CREATE USER 'usuario1'@'200.204.196.180' IDENTIFIED WITH mysql_native_password BY '<12345>';
+CREATE USER 'usuario2'@localhost IDENTIFIED WITH mysql_native_password BY '<123456>';
+CREATE USER 'usuario3'@'%' IDENTIFIED WITH mysql_native_password BY '<123457>';
 
+## Adicioando acesos
+CREATE USER 'mentemaker1'@localhost IDENTIFIED WITH mysql_native_password BY '<123456>';
+GRANT ALL ON banco_mentemaker1.* TO'mentemaker1'@localhost;
+
+CREATE USER 'mentemaker2'@'%' IDENTIFIED WITH mysql_native_password BY '<123457>';
+GRANT SELECT ON banco_mentemaker2.* TO'mentemaker2'@'%';
+
+CREATE USER 'mentemaker3'@'%' IDENTIFIED WITH mysql_native_password BY '<1234578>';
+GRANT SELECT ON banco_mentemaker3.funcionarios TO'mentemaker3'@'%';
+
+## Removendo acesso
+REVOKE SELECT ON banco_mentemaker1.* FROM 'mentemaker1'@'localhost';
+REVOKE ALL ON banco_mentemaker1.* FROM 'mentemaker1'@'localhost';
+DROP USER IF EXISTS 'mentemaker1'@'localhost';
+
+## Consulta de usuarios
+SELECT user FROM mysql.user;
+SHOW GRANTS FOR 'mentemaker3'@'%';
+
+
+### Transaçoes
+SHOW ENGINES;
+
+CREATE TABLE contas(
+  id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  titular VARCHAR (50),
+  saldo DOUBLE not null,
+  PRIMARY KEY (id)
+)engine = InnoDB;
+
+## adicionado contas
+INSERT INTO contas VALUES('Jose', '1000');
+INSERT INTO contas VALUES('Pedro', '2000');
+
+start transaction;
+UPDATE contas SET saldo = saldo - 100 WHERE id=1;
+UPDATE contas SET saldo = saldo + 100 WHERE id=2;
+commit;
+
+start transaction;
+UPDATE contas SET saldo = saldo - 100 WHERE id=1;
+UPDATE contas SET saldo = saldo + 100 WHERE id=2;
+rollback;
+
+
+
+### Stored Procedures
+
+CREATE TABLE pedidos(
+  id int primary key autoincrement not null,
+  descicao varchar(100) not null,
+  valor double not null DEFAULT '0',
+  pago varchar(3) not null DEFAULT 'NAO',
+  PRIMARY KEY (codigo)
+);
+## Inserindo pedidos
+insert into pedido values ('computador','49876');
+insert into pedido values ('celular','23.50');
+insert into pedido values ('tv','1000');
+ 
+ ## Criando Stored Procedures para apagar pedidos que nao foram pagos
+ # Devemos buscar pela janela de criacao de Procedures
+ CREATE PROCEDURE sp_apaga_pedidos()
+ BEGIN
+ SET_SQL_SAFE_UPDATES=0;
+ DELETE from pedidos where pago='NAO';
+ END;
+ ##################################################
+ 
+ # Voltando a janela principal
+ CALL sp_apaga_pedidos();
+
+
+## Triggers
+# Tabela exemplo
+create table estoque(
+  id int NOT NULL AUTO_INCREMENT,
+  nome VARCHAR(10),
+  quantidade INT UNSIGNED ZEROFILL,
+  PRIMARY KEY (id)
+);
+
+# Adicionamos um trigger na tabela pedidos, sempre for adicionado elementos no estoque
+# os dados da tabela pedidos que nao foram pagos serao apagados
+CREATE trigger limpa_pedidos
+BEFORE INSERT
+ON estoque
+FOR EACH ROW
+CALL  sp_apaga_pedidos(); 
+
+## Inserindo na tabela estoque
+INSERT INTO estoque VALUES('Notebook', '10'),('Mouse', '10');
+
+
+
+
+
+
+
+
+
+SELECT * FROM contas;
 
